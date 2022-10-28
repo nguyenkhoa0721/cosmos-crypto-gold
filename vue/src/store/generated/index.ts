@@ -1,9 +1,11 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
+import M25Gold from './m25.gold'
 import M25M25 from './m25.m25'
 
 
 export default { 
+  M25Gold: load(M25Gold, 'm25.gold'),
   M25M25: load(M25M25, 'm25.m25'),
   
 }

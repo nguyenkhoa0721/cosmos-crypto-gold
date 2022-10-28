@@ -106,6 +106,9 @@ import (
 
 	"m25/docs"
 
+	goldmodule "m25/x/gold"
+	goldmodulekeeper "m25/x/gold/keeper"
+	goldmoduletypes "m25/x/gold/types"
 	m25module "m25/x/m25"
 	m25modulekeeper "m25/x/m25/keeper"
 	m25moduletypes "m25/x/m25/types"
@@ -165,6 +168,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		m25module.AppModuleBasic{},
+		goldmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -240,6 +244,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	M25Keeper m25modulekeeper.Keeper
+
+	GoldKeeper goldmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -278,6 +284,7 @@ func New(
 		paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey,
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		m25moduletypes.StoreKey,
+		goldmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -494,6 +501,14 @@ func New(
 	)
 	m25Module := m25module.NewAppModule(appCodec, app.M25Keeper, app.AccountKeeper, app.BankKeeper)
 
+	app.GoldKeeper = *goldmodulekeeper.NewKeeper(
+		appCodec,
+		keys[goldmoduletypes.StoreKey],
+		keys[goldmoduletypes.MemStoreKey],
+		app.GetSubspace(goldmoduletypes.ModuleName),
+	)
+	goldModule := goldmodule.NewAppModule(appCodec, app.GoldKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -537,6 +552,7 @@ func New(
 		transferModule,
 		icaModule,
 		m25Module,
+		goldModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -567,6 +583,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		m25moduletypes.ModuleName,
+		goldmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -592,6 +609,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		m25moduletypes.ModuleName,
+		goldmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -622,6 +640,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		m25moduletypes.ModuleName,
+		goldmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -652,6 +671,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		m25Module,
+		goldModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -853,6 +873,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(m25moduletypes.ModuleName)
+	paramsKeeper.Subspace(goldmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
