@@ -1,0 +1,12 @@
+syntax = "proto3";
+package m25.m25;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "m25/x/m25/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

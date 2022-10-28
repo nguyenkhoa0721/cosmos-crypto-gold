@@ -1,0 +1,14 @@
+syntax = "proto3";
+package m25.m25;
+
+import "gogoproto/gogo.proto";
+import "m25/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "m25/x/m25/types";
+
+// GenesisState defines the m25 module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
