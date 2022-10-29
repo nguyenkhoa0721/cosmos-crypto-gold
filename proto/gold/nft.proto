@@ -1,0 +1,12 @@
+syntax = "proto3";
+package m25.gold;
+
+option go_package = "m25/x/gold/types";
+
+message Nft {
+  string index = 1; 
+  string owner = 2; 
+  string uri = 3; 
+  
+}
+

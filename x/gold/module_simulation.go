@@ -24,7 +24,19 @@ var (
 )
 
 const (
-// this line is used by starport scaffolding # simapp/module/const
+	opWeightMsgMint = "op_weight_msg_mint"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgMint int = 100
+
+	opWeightMsgTransfer = "op_weight_msg_transfer"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgTransfer int = 100
+
+	opWeightMsgTransferTo = "op_weight_msg_transfer_to"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgTransferTo int = 100
+
+	// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module
@@ -57,6 +69,39 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
+
+	var weightMsgMint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgMint, &weightMsgMint, nil,
+		func(_ *rand.Rand) {
+			weightMsgMint = defaultWeightMsgMint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgMint,
+		goldsimulation.SimulateMsgMint(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgTransfer int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgTransfer, &weightMsgTransfer, nil,
+		func(_ *rand.Rand) {
+			weightMsgTransfer = defaultWeightMsgTransfer
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgTransfer,
+		goldsimulation.SimulateMsgTransfer(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgTransferTo int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgTransferTo, &weightMsgTransferTo, nil,
+		func(_ *rand.Rand) {
+			weightMsgTransferTo = defaultWeightMsgTransferTo
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgTransferTo,
+		goldsimulation.SimulateMsgTransferTo(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
 

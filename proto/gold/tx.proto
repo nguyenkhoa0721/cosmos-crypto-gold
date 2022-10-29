@@ -7,7 +7,37 @@ option go_package = "m25/x/gold/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc Mint(MsgMint) returns (MsgMintResponse);
+  rpc Transfer(MsgTransfer) returns (MsgTransferResponse);
+  rpc TransferTo(MsgTransferTo) returns (MsgTransferToResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgMint {
+  string creator = 1;
+}
+
+message MsgMintResponse {
+  string nftId = 1;
+}
+
+message MsgTransfer {
+  string creator = 1;
+  string to = 2;
+}
+
+message MsgTransferResponse {
+  string nftId = 1;
+}
+
+message MsgTransferTo {
+  string creator = 1;
+  string nftId = 2;
+  string to = 3;
+}
+
+message MsgTransferToResponse {
+  string nftId = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message
